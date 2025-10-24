@@ -1,12 +1,12 @@
 locals {
+  # Keep the original naming shape: <prefix>_<dataset>
   raw_bucket_name = join("_", compact([var.gcs_prefix, var.billing_dataset_name]))
-  normalized_bucket_name_step1 = lower(regexreplace(local.raw_bucket_name, "[^a-z0-9._-]", "-"))
-  normalized_bucket_name       = regexreplace(regexreplace(local.normalized_bucket_name_step1, "^[._-]+", ""), "[._-]+$", "")
+
+  # Lowercase to be safe (GCS requires lowercase)
+  normalized_bucket_name = lower(local.raw_bucket_name)
 
   bucket_labels = merge(
-    {
-      "cost-center" = "billing"
-    },
+    { "cost-center" = "billing" },
     var.labels
   )
 }
